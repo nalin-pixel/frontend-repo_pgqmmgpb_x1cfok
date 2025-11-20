@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ProgressRing from './components/ProgressRing'
 import { RoutinesPanel, EditPanel, LogsPanel, LegalPanel } from './components/Panels'
+import ConceptObsidian from './components/ConceptObsidian'
 
 // Utilities
 const pad2 = (n) => String(n).padStart(2, '0')
@@ -97,6 +98,24 @@ function useWakeLock(active){
 }
 
 export default function App(){
+  // Concept toggle via query or hash
+  const [showConcept, setShowConcept] = useState(()=>{
+    try {
+      const qs = new URLSearchParams(window.location.search)
+      return qs.get('concept') === 'obsidian' || window.location.hash.includes('obsidian')
+    } catch { return false }
+  })
+  useEffect(()=>{
+    const onHash = ()=>setShowConcept((window.location.search.includes('concept=obsidian')) || window.location.hash.includes('obsidian'))
+    window.addEventListener('hashchange', onHash)
+    window.addEventListener('popstate', onHash)
+    return ()=>{
+      window.removeEventListener('hashchange', onHash)
+      window.removeEventListener('popstate', onHash)
+    }
+  },[])
+  if (showConcept) return <ConceptObsidian />
+
   // Data
   const [routines, setRoutines] = useState(()=>loadRoutines())
   const [selectedId, setSelectedId] = useState(()=>loadSelected() || (routines[0]?.id))
