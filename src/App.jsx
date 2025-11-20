@@ -132,7 +132,7 @@ export default function App(){
 
   // Primary ticker with drift-free math
   useEffect(()=>{
-    if (mode==='idle' || mode==='complete') return
+    if (mode==='idle' || mode==='complete' || mode==='paused') return
     const interval = setInterval(()=>{
       const now = Date.now()
       const ms = Math.max(0, endTsRef.current - now)
